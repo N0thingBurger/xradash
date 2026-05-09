@@ -25,6 +25,7 @@ class BybitManager {
     this.state = {
       positions: {}, // symbol -> position details
       prices: {},    // symbol -> last price
+      btcPrice: 0,
       dailyRealizedPnL: 0,
     };
 
@@ -116,14 +117,23 @@ class BybitManager {
     });
 
     // Public tickers for price updates
-    this.publicWs = new WebsocketClient({ market: 'v5' });
+    this.publicWs = new WebsocketClient({ 
+      market: 'v5',
+      testnet: false
+    });
+    
     this.subscribedSymbols = new Set();
     
     this.publicWs.on('update', (data) => {
-      if (data.topic.startsWith('tickers.')) {
+      if (data.topic && data.topic.startsWith('tickers.')) {
+        const symbol = data.topic.split('.')[1];
         const ticker = data.data;
-        if (ticker.lastPrice) {
-          this.state.prices[ticker.symbol] = parseFloat(ticker.lastPrice);
+        if (ticker && ticker.lastPrice) {
+          const price = parseFloat(ticker.lastPrice);
+          if (symbol === 'BTCUSDT') {
+            this.state.btcPrice = price;
+          }
+          this.state.prices[symbol] = price;
           this.broadcast();
         }
       }
@@ -131,7 +141,13 @@ class BybitManager {
 
     this.publicWs.on('open', () => {
       console.log(`[Public WS] Connection opened`);
+      // Always subscribe to BTCUSDT explicitly
+      this.publicWs.subscribeV5(['tickers.BTCUSDT'], 'linear');
       this.subscribeToTickers(this.publicWs);
+    });
+
+    this.publicWs.on('error', (err) => {
+      console.error(`[Public WS] Error:`, err);
     });
 
     // Periodically check if we need to subscribe to new symbols (safety net)
@@ -196,6 +212,7 @@ class BybitManager {
       this.onUpdate({
         accountCount: this.accounts.length,
         positionCount: positionsArray.length,
+        btcPrice: this.state.btcPrice,
         totalUnrealizedPnL: parseFloat(totalUnrealizedPnL.toFixed(4)),
         dailyRealizedPnL: parseFloat(this.state.dailyRealizedPnL.toFixed(4)),
         worstPosition: worstPosition ? {

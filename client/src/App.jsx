@@ -31,10 +31,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("XRADASH: App mounted");
-  }, []);
-
-  useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
       root.classList.add('dark');
@@ -47,18 +43,24 @@ function App() {
     <div className="h-screen w-screen flex flex-col p-2 overflow-hidden bg-bg-main text-text-main transition-colors duration-200">
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-2 px-1 shrink-0">
-        <div className="flex items-center space-x-2">
-          <h1 className="text-sm font-black tracking-tighter uppercase italic flex items-center">
+        <div className="flex items-center space-x-2 overflow-hidden">
+          <h1 className="text-sm font-black tracking-tighter uppercase italic flex items-center shrink-0">
             <span className="text-trading-up">XRA</span>
             <span className="text-text-main">DASH</span>
           </h1>
           <div className={clsx(
-            "flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold",
+            "flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0",
             isConnected ? "bg-trading-up/10 text-trading-up" : "bg-trading-down/10 text-trading-down"
           )}>
             {isConnected ? <Wifi size={10} /> : <WifiOff size={10} />}
             <span>{isConnected ? 'LIVE' : 'OFFLINE'}</span>
           </div>
+          {data.btcPrice > 0 && (
+            <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded-sm bg-bg-card border border-border-main text-[10px] font-black shrink-0">
+              <span className="text-trading-up">BTC</span>
+              <span className="text-text-main">{data.btcPrice.toLocaleString()}</span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center space-x-2">
