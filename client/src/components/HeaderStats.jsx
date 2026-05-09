@@ -46,17 +46,22 @@ const HeaderStats = ({ data }) => {
             <span className="text-[10px] uppercase text-trading-down font-bold leading-tight flex items-center">
               <AlertCircle size={10} className="mr-1" /> Worst Performer
             </span>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-trading-down leading-none truncate">{worstPosition.symbol}</span>
-              <div className="flex items-center space-x-1 whitespace-nowrap text-trading-down mt-0.5">
-                <span className="text-xs font-bold">
+            <div className="flex flex-col -mt-0.5">
+              <div className="flex items-baseline space-x-1 overflow-hidden">
+                <span className="text-sm font-bold text-trading-down leading-none truncate">{worstPosition.symbol}</span>
+                <span className="text-sm font-bold text-trading-down/90">
+                  {typeof worstPosition.value === 'number' ? worstPosition.value.toFixed(2) : '0.00'}
+                </span>
+              </div>
+              <div className="flex items-center space-x-1 whitespace-nowrap text-trading-down">
+                <span className="text-sm font-black leading-none">
                   {typeof worstPosition.upnl === 'number' ? worstPosition.upnl.toFixed(2) : '0.00'}
                 </span>
-                <span className="text-xs font-bold">|</span>
-                <span className="text-xs font-bold">
+                <span className="text-sm font-black leading-none">|</span>
+                <span className="text-sm font-black leading-none">
                   {typeof worstPosition.movePct === 'number' ? worstPosition.movePct.toFixed(2) : '0.00'}% m
                 </span>
-                <span className="text-[10px] font-semibold opacity-70">
+                <span className="text-sm font-bold opacity-70 leading-none">
                   [{typeof worstPosition.upnlPct === 'number' ? worstPosition.upnlPct.toFixed(2) : '0.00'}% l]
                 </span>
               </div>

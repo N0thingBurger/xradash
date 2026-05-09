@@ -220,7 +220,8 @@ class BybitManager {
           upnl: worstPosition.upnl,
           upnlPct: worstPosition.upnlPct,
           movePct: worstPosition.movePct,
-          side: worstPosition.side
+          side: worstPosition.side,
+          value: worstPosition.value
         } : null,
         positions: positionsArray
       });
